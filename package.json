@@ -13,7 +13,8 @@
     "tauri:build": "tauri build"
   },
   "dependencies": {
-    "@tauri-apps/api": "^2.2.0"
+    "@tauri-apps/api": "^2.2.0",
+    "@tauri-apps/plugin-updater": "^2.11.0"
   },
   "devDependencies": {
     "@hookform/resolvers": "^3.10.0",
