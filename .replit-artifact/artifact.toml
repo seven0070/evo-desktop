@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "EVO Desktop App"
+description = "A desktop-style EVO workspace for chatting with an agent, monitoring missions, reviewing trust status, and managing application settings."
+version = "1.0.0"
+id = "artifacts/evo-desktop-app"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25259
+
+[services.development]
+run = "pnpm --filter @workspace/evo-desktop-app run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/evo-desktop-app", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/evo-desktop-app/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25259"
+BASE_PATH = "/"
