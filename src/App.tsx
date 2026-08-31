@@ -37,6 +37,7 @@ import {
   type SystemHealthUpdate,
 } from "@/lib/tauri-bridge";
 import { loadStoredSettings, saveStoredSetting } from "@/lib/settings-store";
+import { setupDeepLinks } from "@/lib/deep-link";
 
 type Tab = "chat" | "missions" | "trust" | "settings";
 type Appearance = "Light" | "Dark" | "System";
@@ -580,6 +581,27 @@ function EvoDesktopApp() {
       setSendUsage(stored.sendUsage);
       setAppearance(stored.appearance);
     })();
+  }, []);
+
+  useEffect(() => {
+    let unlisten: (() => void) | undefined;
+    void setupDeepLinks((payload) => {
+      if (payload.action === "navigate" && payload.tab) {
+        setActiveTab(payload.tab);
+      } else if (payload.action === "prompt" && payload.prompt) {
+        setActiveTab("chat");
+        void sendPrompt(selectedMission, payload.prompt);
+      } else if (payload.action === "mission" && payload.missionId) {
+        setActiveTab("missions");
+        setSelectedMission(payload.missionId);
+      }
+    }).then((cleanup) => {
+      unlisten = cleanup;
+    });
+
+    return () => {
+      if (unlisten) unlisten();
+    };
   }, []);
 
   const updateLanguage = (val: string) => {
