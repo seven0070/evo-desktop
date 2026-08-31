@@ -1,6 +1,6 @@
 [package]
 name = "evo-desktop"
-version = "1.0.0"
+version = "1.1.0"
 description = "EVO desktop client"
 authors = ["EVO"]
 edition = "2021"
