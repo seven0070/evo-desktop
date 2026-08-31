@@ -36,6 +36,7 @@ import {
   type MissionStepUpdate,
   type SystemHealthUpdate,
 } from "@/lib/tauri-bridge";
+import { loadStoredSettings, saveStoredSetting } from "@/lib/settings-store";
 
 type Tab = "chat" | "missions" | "trust" | "settings";
 type Appearance = "Light" | "Dark" | "System";
@@ -571,6 +572,38 @@ function EvoDesktopApp() {
   const missionInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    void (async () => {
+      const stored = await loadStoredSettings();
+      setLanguage(stored.language);
+      setSuggestedPrompts(stored.suggestedPrompts);
+      setAutoApprove(stored.autoApprove);
+      setSendUsage(stored.sendUsage);
+      setAppearance(stored.appearance);
+    })();
+  }, []);
+
+  const updateLanguage = (val: string) => {
+    setLanguage(val);
+    void saveStoredSetting("language", val);
+  };
+  const updateSuggestedPrompts = (val: boolean) => {
+    setSuggestedPrompts(val);
+    void saveStoredSetting("suggestedPrompts", val);
+  };
+  const updateAutoApprove = (val: boolean) => {
+    setAutoApprove(val);
+    void saveStoredSetting("autoApprove", val);
+  };
+  const updateSendUsage = (val: boolean) => {
+    setSendUsage(val);
+    void saveStoredSetting("sendUsage", val);
+  };
+  const updateAppearance = (val: Appearance) => {
+    setAppearance(val);
+    void saveStoredSetting("appearance", val);
+  };
+
+  useEffect(() => {
     let disposed = false;
     const unlistenPromise = subscribeToAgentEvents((event: AgentEvent) => {
       if (disposed) return;
@@ -646,7 +679,7 @@ function EvoDesktopApp() {
           {activeTab === "chat" && <ChatPanel selectedMission={selectedMission} inputRef={chatInputRef} />}
            {activeTab === "missions" && <MissionsPanel selectedMission={selectedMission} setSelectedMission={setSelectedMission} inputRef={missionInputRef} missionStepUpdate={missionStepUpdate} />}
            {activeTab === "trust" && <TrustPanel systemHealth={systemHealth} />}
-          {activeTab === "settings" && <SettingsPanel activeSettingsTab={activeSettingsTab} setActiveSettingsTab={setActiveSettingsTab} language={language} setLanguage={setLanguage} suggestedPrompts={suggestedPrompts} setSuggestedPrompts={setSuggestedPrompts} autoApprove={autoApprove} setAutoApprove={setAutoApprove} sendUsage={sendUsage} setSendUsage={setSendUsage} appearance={appearance} setAppearance={setAppearance} />}
+          {activeTab === "settings" && <SettingsPanel activeSettingsTab={activeSettingsTab} setActiveSettingsTab={setActiveSettingsTab} language={language} setLanguage={updateLanguage} suggestedPrompts={suggestedPrompts} setSuggestedPrompts={updateSuggestedPrompts} autoApprove={autoApprove} setAutoApprove={updateAutoApprove} sendUsage={sendUsage} setSendUsage={updateSendUsage} appearance={appearance} setAppearance={updateAppearance} />}
         </main>
       </div>
     </div>
