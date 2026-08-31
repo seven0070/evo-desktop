@@ -25,6 +25,7 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { UpdateNotification } from "@/components/UpdateNotification";
+import { CustomTitleBar } from "@/components/CustomTitleBar";
 import {
   approveAction,
   sendPrompt,
@@ -619,6 +620,7 @@ function EvoDesktopApp() {
 
   return (
     <div className={`evo-app ${isDark ? "evo-dark" : ""}`} data-testid="evo-app">
+      <CustomTitleBar />
       <div className="evo-shell">
         <aside className="evo-sidebar">
           <div className="evo-sidebar-scroll">
